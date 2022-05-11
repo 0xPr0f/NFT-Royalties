@@ -117,14 +117,15 @@ contract Token is Ownable, ERC721Enumerable, ERC721URIStorage {
 
     /// @notice Called with the sale price to determine how much royalty
     //          is owed and to whom.
-    // @param _tokenId - the NFT asset queried for royalty information
+    /// @param _tokenId - the NFT asset queried for royalty information
     /// @param _salePrice - sale price of the NFT asset specified by _tokenId
     /// @return receiver - address of who should be sent the royalty payment
     /// @return royaltyAmount - the royalty payment amount for _value sale price
-    function royaltyInfo(
-        /*uint256 _tokenId,*/
-        uint256 _salePrice
-    ) external view returns (address receiver, uint256 royaltyAmount) {
+    function royaltyInfo(uint256 _tokenId, uint256 _salePrice)
+        external
+        view
+        returns (address receiver, uint256 royaltyAmount)
+    {
         uint256 _royalties = (_salePrice * royaltiesPercentage) / 100;
         return (_royaltiesReceiver, _royalties);
     }
