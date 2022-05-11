@@ -224,7 +224,8 @@ contract Marketplace {
         delete (activeBuyOffers[tokenId]);
         // Refund the current buy offer if it is non-zero
         if (refundBuyOfferAmount > 0) {
-            msg.sender.call{value: refundBuyOfferAmount}("");
+            (bool success, ) = msg.sender.call{value: refundBuyOfferAmount}("");
+            require(success);
         }
         // Broadcast offer withdrawal
         emit BuyOfferWithdrawn(tokenId, msg.sender);
@@ -253,7 +254,9 @@ contract Marketplace {
         // Withdraw buyer's balance
         buyOffersEscrow[currentBuyer][tokenId] = 0;
         // Transfer funds to the seller
-        msg.sender.call{value: netSaleValue}("");
+        (bool success, ) = msg.sender.call{value: netSaleValue}("");
+        require(success);
+
         // And token to the buyer
         token.safeTransferFrom(msg.sender, currentBuyer, tokenId);
         // Broadcast the sale

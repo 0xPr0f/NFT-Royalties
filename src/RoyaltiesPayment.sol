@@ -42,7 +42,7 @@ contract RoyaltiesPayment is Ownable {
     /// @notice Whether an adress is in our list of payees or not
     /// @param user - the address to verify
     /// @return true if the user is a payee, false otherwise
-    function _isPayee(address user) internal returns (bool) {
+    function _isPayee(address user) internal view returns (bool) {
         return balances[user].userIndex > 0;
     }
 
@@ -52,7 +52,8 @@ contract RoyaltiesPayment is Ownable {
         require(amount > 0);
         require(amount <= balances[msg.sender].balance, "Insufficient balance");
         balances[msg.sender].balance -= amount;
-        msg.sender.call{value: amount}("");
+        (bool success, ) = msg.sender.call{value: amount}("");
+        require(success);
     }
 
     /// @notice Lets a user withdraw all the funds available to them
@@ -60,7 +61,8 @@ contract RoyaltiesPayment is Ownable {
         require(balances[msg.sender].balance > 0);
         uint256 balance = balances[msg.sender].balance;
         balances[msg.sender].balance = 0;
-        msg.sender.call{value: balance}("");
+        (bool success, ) = msg.sender.call{value: balance}("");
+        require(success);
     }
 
     /// @notice Clear all balances by paying out all payees their share
@@ -70,7 +72,8 @@ contract RoyaltiesPayment is Ownable {
             uint256 availableBalance = balances[payee].balance;
             if (availableBalance > 0) {
                 balances[payee].balance = 0;
-                payee.call{value: availableBalance}("");
+                (bool success, ) = payee.call{value: availableBalance}("");
+                require(success);
             }
         }
     }

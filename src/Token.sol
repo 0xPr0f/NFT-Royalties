@@ -25,12 +25,14 @@ contract Token is Ownable, ERC721Enumerable, ERC721URIStorage {
     // Events
     event Mint(uint256 tokenId, address recipient);
 
-    constructor(address initialRoyaltiesReceiver) ERC721("Molly", "MLT") {
+    constructor(address initialRoyaltiesReceiver)
+        ERC721("NFT_royaltiesTest", "NFTRT")
+    {
         _royaltiesReceiver = initialRoyaltiesReceiver;
     }
 
     /** Overrides ERC-721's _baseURI function */
-    function _baseURI() internal view override returns (string memory) {
+    function _baseURI() internal pure override returns (string memory) {
         return "https://gateway.pinata.cloud/ipfs/";
     }
 
@@ -51,7 +53,7 @@ contract Token is Ownable, ERC721Enumerable, ERC721URIStorage {
 
     /// @notice Getter function for _royaltiesReceiver
     /// @return the address of the royalties recipient
-    function royaltiesReceiver() external returns (address) {
+    function royaltiesReceiver() external view returns (address) {
         return _royaltiesReceiver;
     }
 
@@ -115,15 +117,14 @@ contract Token is Ownable, ERC721Enumerable, ERC721URIStorage {
 
     /// @notice Called with the sale price to determine how much royalty
     //          is owed and to whom.
-    /// @param _tokenId - the NFT asset queried for royalty information
+    // @param _tokenId - the NFT asset queried for royalty information
     /// @param _salePrice - sale price of the NFT asset specified by _tokenId
     /// @return receiver - address of who should be sent the royalty payment
     /// @return royaltyAmount - the royalty payment amount for _value sale price
-    function royaltyInfo(uint256 _tokenId, uint256 _salePrice)
-        external
-        view
-        returns (address receiver, uint256 royaltyAmount)
-    {
+    function royaltyInfo(
+        /*uint256 _tokenId,*/
+        uint256 _salePrice
+    ) external view returns (address receiver, uint256 royaltyAmount) {
         uint256 _royalties = (_salePrice * royaltiesPercentage) / 100;
         return (_royaltiesReceiver, _royalties);
     }
